@@ -1,16 +1,17 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from sqlalchemy import create_engine
-from json import dumps
+import mysql
 
-db_connect = create_engine("mysql://anonymous@ensembldb.ensembl.org/ensembl_website_97?port=3306")
+db_connect = create_engine("mysql+mysqldb://anonymous@ensembldb.ensembl.org:3306/ensembl_website_97")
 
 app = Flask(__name__)
 api = Api(app)
 
+field_config = ['display_label','location','stable_id','species']
 
 class InvalidUsage(Exception):
-    status_code = 405
+    status_code = 400
 
     def __init__(self, message, status_code=None, payload=None):
         Exception.__init__(self)
@@ -32,10 +33,45 @@ def handle_invalid_usage(error):
     return response
 
 
-class ensembl_lookup(Resource):
-    def get(self):
-        conn = db_connect.connect()
+@app.route('/')
+def hello_world():
+    return "Welcome to the root of this endpoint! Please try to hit a valid endpoint (genes could work, for example)"
 
+class genes(Resource):
+    def get(self):
+        wheres = []
+
+        # Process lookup
+        try:
+            lookup = request.args['lookup']
+        except InvalidUsage:
+            return jsonify({405: "Invalid Query: it is mandatory to have a lookup value"})
+
+        if len(lookup) < 3:
+            return jsonify({405: "Invalid Query: please ensure your lookup is at least 3 characters"})
+        elif not lookup.isalnum():
+            return jsonify({200: "You connected fine, just are not allowed any non alpha-numeric characters"})
+        wheres.append("display_label LIKE '"+lookup+"%%'")
+
+        # Process Species
+        try:
+            species = request.args['species']
+        except:
+            pass
+        else:
+            if species is not None and len(species) > 0: # Deciding here that a blank species request will skip
+                wheres.append("species like '"+species+"'")
+
+        fields = ', '.join(field_config)
+        where = ' AND '.join(wheres)
+        conn = db_connect.connect()
+        query = conn.execute("SELECT "+fields+" from gene_autocomplete WHERE "+where+";")
+        result = {'data': [dict(zip(tuple (query.keys()), i)) for i in query.cursor]}
+        return jsonify(result)
+
+
+api.add_resource(genes, '/genes')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5002)
+
