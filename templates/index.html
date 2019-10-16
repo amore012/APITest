@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Docs!</title>
+    <style>
+        table, td, tr {
+        border:thin black solid;
+        padding:3px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<table width="100%">
+    <tr>
+        <th colspan="2" align="center">
+            <b>Installation</b>
+        </th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <ul>
+                <li>Git Pull from <a href="https://github.com/amore012/APITest">https://github.com/amore012/APITest</a></li>
+                <li>Run test.py in virtual environment</li>
+                <li>Service should be running on <a>127.0.0.1:5002</a>, though only have a Windows machine to test this
+                    on
+                </li>
+            </ul>
+        </td>
+    </tr>
+
+
+
+    <tr>
+        <td>
+            <u><b>/genes</b></u><br><br>
+            <code>Get 127.0.0.1::5002/genes</code><br><br>
+            Accepts Parameters:
+            <ul>
+                <li>lookup <i>(string, required)</i>: must have a minimum of three characters</li>
+                <li>species <i>(string, optional)</i></li>
+            </ul>
+
+        </td>
+        <td>
+            Sample request
+            <a href="http://127.0.0.1:5002/genes?lookup=aba&species=taeniopygia_guttata">http://127.0.0.1:5002/genes?lookup=aba&species=taeniopygia_guttata</a><br>
+
+            <b>Response</b>
+            <pre>
+{
+  "data": [
+    {
+      "display_label": "ABAT",
+      "location": "14:5274801-5300346",
+      "species": "taeniopygia_guttata",
+      "stable_id": "ENSTGUG00000004611"
+    }
+  ]
+}</pre>
+
+        </td>
+
+    </tr>
+
+    <tr>
+        <th colspan="2" align="center">
+            <b>Deployment and Scalability</b>
+        </th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            Having just recently lost my home laptop, and panickedly doing this on my work machine instead (which has a
+            strange blend of VirtualBox software which I find fragile), I unfortunately had to put the kaibosh on my
+            attempts at Docker. Containerization methods appear to be the future (if not the now), and would indicate to
+            me that the way to maintain something which is scalable would be to manage deploys through a container and
+            deploy it through a swarm. I have actually not gotten to the K8 section of the Udemy course yet, so I am not
+            fully sure that there would be more to do as far as ensuring cross-platform scalability, though it is
+            something
+            I am eagerly awaiting the study of.
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2" align="center">
+            <b>Unit Testing?</b>
+        </th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            Unit Testing! In my current company we have been using PHPUnit, which has proven valid. For an API
+            service, you would need to test against valid inputs to ensure they are valid. For this particular example,
+            I would be able to check the "wild-card" nature of the lookup against a small list of expected results.
+            A Library like Nose would be able to mock and assert responses to check whatever I am passing it.
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2" align="center">
+            <b>Do I have a better documentation example?</b>
+        </th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            Yes! I do: I have worked on my current company's documentation in a maintenance capacity here:<br>
+            <a href="https://apisandbox.trial.ezyvet.com/api/docs/">https://apisandbox.trial.ezyvet.com/api/docs/</a><br>
+            There are auto-loader documentation libraries like pdoc or Sphinx (which I gave a go but realized I had
+            already misconfigured my flask to auto-generate the documents, so I wrote these ones instead).
+        </td>
+    </tr>
+
+
+</table>
+
+</body>
+</html>

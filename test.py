@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_restful import Resource, Api
 from sqlalchemy import create_engine
+
 import mysql
 
 db_connect = create_engine("mysql+mysqldb://anonymous@ensembldb.ensembl.org:3306/ensembl_website_97")
@@ -8,7 +9,7 @@ db_connect = create_engine("mysql+mysqldb://anonymous@ensembldb.ensembl.org:3306
 app = Flask(__name__)
 api = Api(app)
 
-field_config = ['display_label','location','stable_id','species']
+field_config = ['display_label', 'location', 'stable_id', 'species']
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -34,8 +35,9 @@ def handle_invalid_usage(error):
 
 
 @app.route('/')
-def hello_world():
-    return "Welcome to the root of this endpoint! Please try to hit a valid endpoint (genes could work, for example)"
+def render_static():
+    return render_template('index.html')
+
 
 class genes(Resource):
     def get(self):
